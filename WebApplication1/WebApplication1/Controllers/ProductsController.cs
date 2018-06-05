@@ -7,17 +7,44 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using WebApplication1.Models.Interface;
+using WebApplication1.Models.Repositiry;
 
 namespace WebApplication1.Controllers
 {
     public class ProductsController : Controller
     {
-        private NorthwindEntities db = new NorthwindEntities();
+        private IProductRepository prodRepo;
+        private ICategoryRepository cateRepo;
+        private ISuppliersRepository suppRepo;
+
+        public IEnumerable<Categories> Categories
+        {
+            get
+            {
+                return cateRepo.GetAll();
+            }
+        }
+
+        public IEnumerable<Suppliers> Suppliers
+        {
+            get
+            {
+                return suppRepo.GetAll();
+            }
+        }
+
+        public ProductsController()
+        {
+            prodRepo = new ProductRepository();
+            cateRepo = new CategoryRepository();
+            suppRepo = new SuppliersRepository();
+        }
 
         // GET: Products
         public ActionResult Index()
         {
-            var products = db.Products.Include(p => p.Categories).Include(p => p.Suppliers);
+            var products = prodRepo.GetAll();
             return View(products.ToList());
         }
 
@@ -28,7 +55,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = db.Products.Find(id);
+            Products products = prodRepo.Get(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -39,8 +66,8 @@ namespace WebApplication1.Controllers
         // GET: Products/Create
         public ActionResult Create()
         {
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName");
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName");
+            ViewBag.CategoryID = new SelectList(Categories, "CategoryID", "CategoryName");
+            ViewBag.SupplierID = new SelectList(Suppliers, "SupplierID", "CompanyName");
             return View();
         }
 
@@ -53,13 +80,12 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(products);
-                db.SaveChanges();
+                prodRepo.Create(products);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
+            ViewBag.CategoryID = new SelectList(Categories, "CategoryID", "CategoryName", products.CategoryID);
+            ViewBag.SupplierID = new SelectList(Suppliers, "SupplierID", "CompanyName", products.SupplierID);
             return View(products);
         }
 
@@ -70,13 +96,13 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = db.Products.Find(id);
+            Products products = prodRepo.Get(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
+            ViewBag.CategoryID = new SelectList(Categories, "CategoryID", "CategoryName", products.CategoryID);
+            ViewBag.SupplierID = new SelectList(Suppliers, "SupplierID", "CompanyName", products.SupplierID);
             return View(products);
         }
 
@@ -89,12 +115,11 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(products).State = EntityState.Modified;
-                db.SaveChanges();
+                prodRepo.Update(products);
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
+            ViewBag.CategoryID = new SelectList(Categories, "CategoryID", "CategoryName", products.CategoryID);
+            ViewBag.SupplierID = new SelectList(Suppliers, "SupplierID", "CompanyName", products.SupplierID);
             return View(products);
         }
 
@@ -105,7 +130,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = db.Products.Find(id);
+            Products products = prodRepo.Get(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -118,19 +143,9 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Products products = db.Products.Find(id);
-            db.Products.Remove(products);
-            db.SaveChanges();
+            Products products = prodRepo.Get(id);
+            prodRepo.Delete(products);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

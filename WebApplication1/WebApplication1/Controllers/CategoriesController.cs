@@ -7,17 +7,25 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using WebApplication1.Models.Interface;
+using WebApplication1.Models.Repositiry;
 
 namespace WebApplication1.Controllers
 {
     public class CategoriesController : Controller
     {
-        private NorthwindEntities db = new NorthwindEntities();
+        private ICategoryRepository cateRepo;
+
+        public CategoriesController()
+        {
+            cateRepo = new CategoryRepository();
+        }
 
         // GET: Categories
         public ActionResult Index()
         {
-            return View(db.Categories.ToList());
+            var categories = cateRepo.GetAll().ToList();
+            return View(categories);
         }
 
         // GET: Categories/Details/5
@@ -27,7 +35,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = db.Categories.Find(id);
+            Categories categories = cateRepo.Get(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -50,8 +58,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Categories.Add(categories);
-                db.SaveChanges();
+                cateRepo.Create(categories);
                 return RedirectToAction("Index");
             }
 
@@ -65,7 +72,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = db.Categories.Find(id);
+            Categories categories = cateRepo.Get(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -82,8 +89,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(categories).State = EntityState.Modified;
-                db.SaveChanges();
+                cateRepo.Update(categories);
                 return RedirectToAction("Index");
             }
             return View(categories);
@@ -96,7 +102,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = db.Categories.Find(id);
+            Categories categories = cateRepo.Get(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -109,19 +115,9 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Categories categories = db.Categories.Find(id);
-            db.Categories.Remove(categories);
-            db.SaveChanges();
+            Categories categories = cateRepo.Get(id);
+            cateRepo.Delete(categories);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

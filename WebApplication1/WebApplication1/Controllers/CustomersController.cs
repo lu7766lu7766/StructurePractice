@@ -7,17 +7,24 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using WebApplication1.Models.Interface;
+using WebApplication1.Models.Repositiry;
 
 namespace WebApplication1.Controllers
 {
     public class CustomersController : Controller
     {
-        private NorthwindEntities db = new NorthwindEntities();
+        private ICustomerRepository custRepo;
 
+        public CustomersController()
+        {
+            custRepo = new CustomerRepository();
+        }
         // GET: Customers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            var result = custRepo.GetAll();
+            return View(result);
         }
 
         // GET: Customers/Details/5
@@ -27,7 +34,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = db.Customers.Find(id);
+            Customers customers = custRepo.Get(id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -50,8 +57,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customers);
-                db.SaveChanges();
+                custRepo.Create(customers);
                 return RedirectToAction("Index");
             }
 
@@ -65,12 +71,12 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = db.Customers.Find(id);
-            if (customers == null)
+            Customers customer = custRepo.Get(id);
+            if (customer == null)
             {
                 return HttpNotFound();
             }
-            return View(customers);
+            return View(customer);
         }
 
         // POST: Customers/Edit/5
@@ -82,8 +88,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customers).State = EntityState.Modified;
-                db.SaveChanges();
+                custRepo.Update(customers);
                 return RedirectToAction("Index");
             }
             return View(customers);
@@ -96,7 +101,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = db.Customers.Find(id);
+            Customers customers = custRepo.Get(id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -109,19 +114,9 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Customers customers = db.Customers.Find(id);
-            db.Customers.Remove(customers);
-            db.SaveChanges();
+            Customers customers = custRepo.Get(id);
+            custRepo.Delete(customers);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
