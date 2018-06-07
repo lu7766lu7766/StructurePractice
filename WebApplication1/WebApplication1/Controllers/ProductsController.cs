@@ -14,9 +14,9 @@ namespace WebApplication1.Controllers
 {
     public class ProductsController : Controller
     {
-        private IProductRepository prodRepo;
-        private ICategoryRepository cateRepo;
-        private ISuppliersRepository suppRepo;
+        private IRepository<Products> prodRepo;
+        private IRepository<Categories> cateRepo;
+        private IRepository<Suppliers> suppRepo;
 
         public IEnumerable<Categories> Categories
         {
@@ -36,9 +36,9 @@ namespace WebApplication1.Controllers
 
         public ProductsController()
         {
-            prodRepo = new ProductRepository();
-            cateRepo = new CategoryRepository();
-            suppRepo = new SuppliersRepository();
+            prodRepo = new GenericRepository<Products>();
+            cateRepo = new GenericRepository<Categories>();
+            suppRepo = new GenericRepository<Suppliers>();
         }
 
         // GET: Products
@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(id.Value);
+            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -96,7 +96,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(id.Value);
+            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -130,7 +130,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(id.Value);
+            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -143,7 +143,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Products products = prodRepo.Get(id);
+            Products products = prodRepo.Get(a => a.CategoryID == id);
             prodRepo.Delete(products);
             return RedirectToAction("Index");
         }

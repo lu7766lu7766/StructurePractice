@@ -14,11 +14,11 @@ namespace WebApplication1.Controllers
 {
     public class CustomersController : Controller
     {
-        private ICustomerRepository custRepo;
+        private IRepository<Customers> custRepo;
 
         public CustomersController()
         {
-            custRepo = new CustomerRepository();
+            custRepo = new GenericRepository<Customers>();
         }
         // GET: Customers
         public ActionResult Index()
@@ -34,7 +34,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = custRepo.Get(id);
+            Customers customers = custRepo.Get(a => a.CustomerID == id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -71,7 +71,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customer = custRepo.Get(id);
+            Customers customer = custRepo.Get(a => a.CustomerID == id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -101,7 +101,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = custRepo.Get(id);
+            Customers customers = custRepo.Get(a => a.CustomerID == id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -114,7 +114,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Customers customers = custRepo.Get(id);
+            Customers customers = custRepo.Get(a => a.CustomerID == id);
             custRepo.Delete(customers);
             return RedirectToAction("Index");
         }
