@@ -7,88 +7,16 @@ using WebApplication1.Models.Interface;
 
 namespace WebApplication1.Models.Repositiry
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : GenericRepository<Products>, IProductRepository
     {
-        protected NorthwindEntities db
+        public IEnumerable<Products> GetByCateogy(int categoryID)
         {
-            get;
-            private set;
+            return GetAll().Where(x => x.CategoryID == categoryID);
         }
 
-        public ProductRepository()
+        public Products GetByID(int productID)
         {
-            db = new NorthwindEntities();
-        }
-        public void Create(Products instance)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException("instance");
-            }
-            else
-            {
-                db.Products.Add(instance);
-                SaveChanges();
-            }
-        }
-
-        public void Delete(Products instance)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException("instance");
-            }
-            else
-            {
-                db.Entry(instance).State = EntityState.Deleted;
-                SaveChanges();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (db != null)
-                {
-                    db.Dispose();
-                    db = null;
-                }
-            }
-        }
-
-        public Products Get(int productID)
-        {
-            return db.Products.FirstOrDefault(x => x.ProductID == productID);
-        }
-
-        public IQueryable<Products> GetAll()
-        {
-            return db.Products.Include(p => p.Categories).OrderByDescending(x => x.ProductID);
-        }
-
-        public void SaveChanges()
-        {
-            db.SaveChanges();
-        }
-
-        public void Update(Products instance)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException("instance");
-            }
-            else
-            {
-                db.Entry(instance).State = EntityState.Modified;
-                SaveChanges();
-            }
+            return Get(x => x.ProductID == productID);
         }
     }
 }

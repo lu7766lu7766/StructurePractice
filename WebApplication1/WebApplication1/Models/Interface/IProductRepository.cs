@@ -7,6 +7,8 @@ namespace WebApplication1.Models.Interface
 {
     public interface IProductRepository : IRepository<Products>
     {
-        
+        Products GetByID(int productID);
+
+        IEnumerable<Products> GetByCateogy(int categoryID);
     }
 }

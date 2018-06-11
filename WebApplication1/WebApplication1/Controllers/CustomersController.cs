@@ -14,11 +14,11 @@ namespace WebApplication1.Controllers
 {
     public class CustomersController : Controller
     {
-        private IRepository<Customers> custRepo;
+        private ICustomerRepository custRepo;
 
         public CustomersController()
         {
-            custRepo = new GenericRepository<Customers>();
+            custRepo = new CustomerRepository();
         }
         // GET: Customers
         public ActionResult Index()

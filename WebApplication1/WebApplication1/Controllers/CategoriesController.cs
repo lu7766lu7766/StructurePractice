@@ -14,11 +14,11 @@ namespace WebApplication1.Controllers
 {
     public class CategoriesController : Controller
     {
-        private IRepository<Categories> cateRepo;
+        private ICategoryRepository cateRepo;
 
         public CategoriesController()
         {
-            cateRepo = new GenericRepository<Categories>();
+            cateRepo = new CategoryRepository();
         }
 
         // GET: Categories
@@ -35,7 +35,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.Get(x => x.CategoryID == id.Value);
+            Categories categories = cateRepo.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.Get(x => x.CategoryID == id.Value);
+            Categories categories = cateRepo.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -102,7 +102,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.Get(x => x.CategoryID == id.Value);
+            Categories categories = cateRepo.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -115,7 +115,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Categories categories = cateRepo.Get(x => x.CategoryID == id);
+            Categories categories = cateRepo.GetByID(id);
             cateRepo.Delete(categories);
             return RedirectToAction("Index");
         }

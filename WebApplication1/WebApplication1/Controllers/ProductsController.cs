@@ -14,9 +14,9 @@ namespace WebApplication1.Controllers
 {
     public class ProductsController : Controller
     {
-        private IRepository<Products> prodRepo;
-        private IRepository<Categories> cateRepo;
-        private IRepository<Suppliers> suppRepo;
+        private IProductRepository prodRepo;
+        private ICategoryRepository cateRepo;
+        private ISuppliersRepository suppRepo;
 
         public IEnumerable<Categories> Categories
         {
@@ -36,16 +36,55 @@ namespace WebApplication1.Controllers
 
         public ProductsController()
         {
-            prodRepo = new GenericRepository<Products>();
-            cateRepo = new GenericRepository<Categories>();
-            suppRepo = new GenericRepository<Suppliers>();
+            prodRepo = new ProductRepository();
+            cateRepo = new CategoryRepository();
+            suppRepo = new SuppliersRepository();
         }
 
         // GET: Products
-        public ActionResult Index()
+        public ActionResult Index(string category = "all")
         {
-            var products = prodRepo.GetAll();
-            return View(products.ToList());
+            var categoryID = 1;
+
+            ViewBag.CategorySelectList = int.TryParse(category, out categoryID)
+                ? CategorySelectList(categoryID.ToString())
+                : CategorySelectList("all");
+
+            var result = category.Equals("all", StringComparison.OrdinalIgnoreCase)
+                ? prodRepo.GetAll()
+                : prodRepo.GetByCateogy(categoryID);
+
+            ViewBag.Category = category;
+
+            var products = prodRepo.GetAll()
+                                   .OrderByDescending(x => x.ProductID)
+                                   .ToList();
+
+            return View(products);
+        }
+
+        public List<SelectListItem> CategorySelectList(string selectedValue = "all")
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem()
+            {
+                Text = "All Category",
+                Value = "all",
+                Selected = selectedValue.Equals("all", StringComparison.OrdinalIgnoreCase)
+            });
+
+            var categories = cateRepo.GetAll().OrderBy(x => x.CategoryID);
+
+            foreach (var c in categories)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = c.CategoryName,
+                    Value = c.CategoryID.ToString(),
+                    Selected = selectedValue.Equals(c.CategoryID.ToString())
+                });
+            }
+            return items;
         }
 
         // GET: Products/Details/5
@@ -55,7 +94,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
+            Products products = prodRepo.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -96,7 +135,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
+            Products products = prodRepo.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -130,7 +169,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.Get(a => a.CategoryID == id.Value);
+            Products products = prodRepo.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -143,7 +182,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Products products = prodRepo.Get(a => a.CategoryID == id);
+            Products products = prodRepo.GetByID(id);
             prodRepo.Delete(products);
             return RedirectToAction("Index");
         }
