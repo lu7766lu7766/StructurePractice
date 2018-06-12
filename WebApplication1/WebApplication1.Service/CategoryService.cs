@@ -12,7 +12,12 @@ namespace WebApplication1.Service
 {
     public class CategoryService : ICategoryService
     {
-        private IRepository<Categories> repository = new GenericRepository<Categories>();
+        private IRepository<Categories> repository;
+
+        public CategoryService(IRepository<Categories> _repo)
+        {
+            repository = _repo;
+        }
         public IResult Create(Categories instance)
         {
             if (instance == null)

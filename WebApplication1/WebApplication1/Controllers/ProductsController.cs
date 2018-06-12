@@ -34,11 +34,13 @@ namespace WebApplication1.Controllers
             }
         }
 
-        public ProductsController()
+        public ProductsController(IProductService _prodServ,
+                                  ICategoryService _cateServ,
+                                  ISuppliersService _suppServ)
         {
-            prodServ = new ProductService();
-            cateServ = new CategoryService();
-            suppServ = new SuppliersService();
+            prodServ = _prodServ;
+            cateServ = _cateServ;
+            suppServ = _suppServ;
         }
 
         // GET: Products

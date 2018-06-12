@@ -16,9 +16,9 @@ namespace WebApplication1.Controllers
     {
         private ICategoryService cateServ;
 
-        public CategoriesController()
+        public CategoriesController(ICategoryService _serv)
         {
-            cateServ = new CategoryService();
+            cateServ = _serv;
         }
 
         // GET: Categories

@@ -15,10 +15,10 @@ namespace WebApplication1.Controllers
     public class CustomersController : Controller
     {
         private ICustomerService custServ;
-
-        public CustomersController()
+        
+        public CustomersController(ICustomerService _serv)
         {
-            custServ = new CustomerService();
+            custServ = _serv;
         }
         // GET: Customers
         public ActionResult Index()

@@ -12,7 +12,12 @@ namespace WebApplication1.Service
 {
     public class SuppliersService : ISuppliersService
     {
-        private IRepository<Suppliers> repository = new GenericRepository<Suppliers>();
+        private IRepository<Suppliers> repository;
+
+        public SuppliersService(IRepository<Suppliers> _repo)
+        {
+            repository = _repo;
+        }
 
         public IEnumerable<Suppliers> GetAll()
         {

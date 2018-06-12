@@ -12,8 +12,12 @@ namespace WebApplication1.Service
 {
     public class ProductService : IProductService
     {
-        private IRepository<Products> repository = new GenericRepository<Products>();
+        private IRepository<Products> repository;
 
+        public ProductService(IRepository<Products> _repo)
+        {
+            repository = _repo;
+        }
 
         public IResult Create(Products instance)
         {

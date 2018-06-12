@@ -12,7 +12,12 @@ namespace WebApplication1.Service
 {
     public class CustomerService : ICustomerService
     {
-        private IRepository<Customers> repository = new GenericRepository<Customers>();
+        private IRepository<Customers> repository;
+
+        public CustomerService(IRepository<Customers> _repo)
+        {
+            repository = _repo;
+        }
         public IResult Create(Customers instance)
         {
             if (instance == null)

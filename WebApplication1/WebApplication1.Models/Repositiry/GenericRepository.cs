@@ -18,10 +18,10 @@ namespace WebApplication1.Models.Repositiry
             set;
         }
 
-        public GenericRepository()
-            : this(new NorthwindEntities())
-        {
-        }
+        //public GenericRepository()
+        //    : this(new NorthwindEntities())
+        //{
+        //}
 
         public GenericRepository(DbContext context)
         {
@@ -32,14 +32,14 @@ namespace WebApplication1.Models.Repositiry
             _context = context;
         }
 
-        public GenericRepository(ObjectContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-            _context = new DbContext(context, true);
-        }
+        //public GenericRepository(ObjectContext context)
+        //{
+        //    if (context == null)
+        //    {
+        //        throw new ArgumentNullException("context");
+        //    }
+        //    _context = new DbContext(context, true);
+        //}
 
         
         public void Create(T instance)
