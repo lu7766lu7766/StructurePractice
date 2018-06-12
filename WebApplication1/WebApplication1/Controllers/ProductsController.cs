@@ -7,22 +7,22 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
-using WebApplication1.Models.Interface;
-using WebApplication1.Models.Repositiry;
+using WebApplication1.Service;
+using WebApplication1.Service.Interface;
 
 namespace WebApplication1.Controllers
 {
     public class ProductsController : Controller
     {
-        private IProductRepository prodRepo;
-        private ICategoryRepository cateRepo;
-        private ISuppliersRepository suppRepo;
+        private IProductService prodServ;
+        private ICategoryService cateServ;
+        private ISuppliersService suppServ;
 
         public IEnumerable<Categories> Categories
         {
             get
             {
-                return cateRepo.GetAll();
+                return cateServ.GetAll();
             }
         }
 
@@ -30,15 +30,15 @@ namespace WebApplication1.Controllers
         {
             get
             {
-                return suppRepo.GetAll();
+                return suppServ.GetAll();
             }
         }
 
         public ProductsController()
         {
-            prodRepo = new ProductRepository();
-            cateRepo = new CategoryRepository();
-            suppRepo = new SuppliersRepository();
+            prodServ = new ProductService();
+            cateServ = new CategoryService();
+            suppServ = new SuppliersService();
         }
 
         // GET: Products
@@ -51,12 +51,12 @@ namespace WebApplication1.Controllers
                 : CategorySelectList("all");
 
             var result = category.Equals("all", StringComparison.OrdinalIgnoreCase)
-                ? prodRepo.GetAll()
-                : prodRepo.GetByCateogy(categoryID);
+                ? prodServ.GetAll()
+                : prodServ.GetByCategory(categoryID);
 
             ViewBag.Category = category;
 
-            var products = prodRepo.GetAll()
+            var products = prodServ.GetAll()
                                    .OrderByDescending(x => x.ProductID)
                                    .ToList();
 
@@ -73,7 +73,7 @@ namespace WebApplication1.Controllers
                 Selected = selectedValue.Equals("all", StringComparison.OrdinalIgnoreCase)
             });
 
-            var categories = cateRepo.GetAll().OrderBy(x => x.CategoryID);
+            var categories = cateServ.GetAll().OrderBy(x => x.CategoryID);
 
             foreach (var c in categories)
             {
@@ -94,7 +94,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.GetByID(id.Value);
+            Products products = prodServ.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -119,7 +119,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                prodRepo.Create(products);
+                prodServ.Create(products);
                 return RedirectToAction("Index");
             }
 
@@ -135,7 +135,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.GetByID(id.Value);
+            Products products = prodServ.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -154,7 +154,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                prodRepo.Update(products);
+                prodServ.Update(products);
                 return RedirectToAction("Index");
             }
             ViewBag.CategoryID = new SelectList(Categories, "CategoryID", "CategoryName", products.CategoryID);
@@ -169,7 +169,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Products products = prodRepo.GetByID(id.Value);
+            Products products = prodServ.GetByID(id.Value);
             if (products == null)
             {
                 return HttpNotFound();
@@ -182,8 +182,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Products products = prodRepo.GetByID(id);
-            prodRepo.Delete(products);
+            prodServ.Delete(id);
             return RedirectToAction("Index");
         }
     }

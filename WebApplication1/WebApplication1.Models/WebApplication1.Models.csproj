@@ -86,11 +86,7 @@
     <Compile Include="Employee_Sales_by_Country_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Interface\ICategoryRepository.cs" />
-    <Compile Include="Interface\ICustomerRepository.cs" />
-    <Compile Include="Interface\IProductRepository.cs" />
     <Compile Include="Interface\IRepository.cs" />
-    <Compile Include="Interface\ISuppliersRepository.cs" />
     <Compile Include="Invoices.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -140,11 +136,7 @@
     <Compile Include="Region.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Repositiry\CategoryRepository.cs" />
-    <Compile Include="Repositiry\CustomerRepository.cs" />
     <Compile Include="Repositiry\GenericRepository.cs" />
-    <Compile Include="Repositiry\ProductRepository.cs" />
-    <Compile Include="Repositiry\SuppliersRepository.cs" />
     <Compile Include="SalesByCategory_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

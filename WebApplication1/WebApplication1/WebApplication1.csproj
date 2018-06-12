@@ -221,6 +221,10 @@
       <Project>{251092b0-66ce-4522-8134-286bcb965190}</Project>
       <Name>WebApplication1.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebApplication1.Service\WebApplication1.Service.csproj">
+      <Project>{fbfea5d6-1b8c-470b-99a3-87b94dd8310b}</Project>
+      <Name>WebApplication1.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

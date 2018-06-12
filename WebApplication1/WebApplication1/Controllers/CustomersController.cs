@@ -7,23 +7,23 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
-using WebApplication1.Models.Interface;
-using WebApplication1.Models.Repositiry;
+using WebApplication1.Service;
+using WebApplication1.Service.Interface;
 
 namespace WebApplication1.Controllers
 {
     public class CustomersController : Controller
     {
-        private ICustomerRepository custRepo;
+        private ICustomerService custServ;
 
         public CustomersController()
         {
-            custRepo = new CustomerRepository();
+            custServ = new CustomerService();
         }
         // GET: Customers
         public ActionResult Index()
         {
-            var result = custRepo.GetAll();
+            var result = custServ.GetAll();
             return View(result);
         }
 
@@ -34,7 +34,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = custRepo.Get(a => a.CustomerID == id);
+            Customers customers = custServ.GetByID(id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -57,7 +57,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                custRepo.Create(customers);
+                custServ.Create(customers);
                 return RedirectToAction("Index");
             }
 
@@ -71,7 +71,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customer = custRepo.Get(a => a.CustomerID == id);
+            Customers customer = custServ.GetByID(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -88,7 +88,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                custRepo.Update(customers);
+                custServ.Update(customers);
                 return RedirectToAction("Index");
             }
             return View(customers);
@@ -101,7 +101,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = custRepo.Get(a => a.CustomerID == id);
+            Customers customers = custServ.GetByID(id);
             if (customers == null)
             {
                 return HttpNotFound();
@@ -114,8 +114,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Customers customers = custRepo.Get(a => a.CustomerID == id);
-            custRepo.Delete(customers);
+            custServ.Delete(id);
             return RedirectToAction("Index");
         }
     }

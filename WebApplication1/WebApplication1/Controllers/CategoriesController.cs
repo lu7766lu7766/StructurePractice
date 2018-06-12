@@ -7,24 +7,24 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
-using WebApplication1.Models.Interface;
-using WebApplication1.Models.Repositiry;
+using WebApplication1.Service;
+using WebApplication1.Service.Interface;
 
 namespace WebApplication1.Controllers
 {
     public class CategoriesController : Controller
     {
-        private ICategoryRepository cateRepo;
+        private ICategoryService cateServ;
 
         public CategoriesController()
         {
-            cateRepo = new CategoryRepository();
+            cateServ = new CategoryService();
         }
 
         // GET: Categories
         public ActionResult Index()
         {
-            var categories = cateRepo.GetAll().ToList();
+            var categories = cateServ.GetAll().ToList();
             return View(categories);
         }
 
@@ -35,7 +35,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.GetByID(id.Value);
+            Categories categories = cateServ.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                cateRepo.Create(categories);
+                cateServ.Create(categories);
                 return RedirectToAction("Index");
             }
 
@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.GetByID(id.Value);
+            Categories categories = cateServ.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -89,7 +89,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                cateRepo.Update(categories);
+                cateServ.Update(categories);
                 return RedirectToAction("Index");
             }
             return View(categories);
@@ -102,7 +102,7 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Categories categories = cateRepo.GetByID(id.Value);
+            Categories categories = cateServ.GetByID(id.Value);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -115,8 +115,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Categories categories = cateRepo.GetByID(id);
-            cateRepo.Delete(categories);
+            cateServ.Delete(id);
             return RedirectToAction("Index");
         }
     }
