@@ -10,6 +10,7 @@ namespace WebApplication1.Controllers
     {
         public ActionResult Index()
         {
+            ViewData["Message"] = "歡迎使用";
             return View();
         }
 
