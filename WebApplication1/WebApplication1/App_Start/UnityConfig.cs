@@ -25,10 +25,7 @@ namespace WebApplication1
             // it is NOT necessary to register your controllers
 
             // e.g. container.RegisterType<ITestService, TestService>();
-            //container.RegisterType<IDbContextFactory, DbContext>(
-            //    new HierarchicalLifetimeManager(),
-            //    new InjectionConstructor(connectionString));
-
+            
             //Repository
             container.RegisterType(
                 typeof(IRepository<>),
@@ -39,7 +36,7 @@ namespace WebApplication1
 
             //Service
             container.RegisterTypes(
-                AllClasses.FromAssemblies(true, Assembly.Load("WebApplication1.Service")), // 掃描目前已經載入此應用程式的全部組件。
+                AllClasses.FromAssemblies(true, Assembly.Load("WebApplication1.Service")), // 掃描Service組件。
                 WithMappings.FromMatchingInterface,
                 overwriteExistingMappings: true,
                 getName: WithName.Default);
